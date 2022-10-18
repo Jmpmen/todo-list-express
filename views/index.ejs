@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -21,15 +21,14 @@
     <h1>Todo List: </h1>
     <ul class="todoItems">
     <% for(let i=0; i < items.length; i++) {%>
-        <li class="item">
-            <% if(items[i].completed === true) {%>
-                <span class='completed'><%= items[i].thing %></span>
-            <% }else{ %>
+        <% if(items[i].deleted === false && items[i].completed === false) {%>
+            <li class="item">
                 <span><%= items[i].thing %></span>
-            <% } %>    
-            <span class='fa fa-trash'></span>
-        </li>
-    <% } %>
+                <span class='fa fa-check'></span>    
+                <span class='fa fa-remove'></span>
+            </li>
+        <% }      
+     } %>
     </ul>
 
     <h2>Left to do: <%= left %></h2>
@@ -40,6 +39,30 @@
         <input type="text" placeholder="Thing To Do" name="todoItem">
         <input type="submit">
     </form>
+
+    <h1>Completed: </h1>
+    <ul >
+    <% for(let i=0; i < items.length; i++) {%>
+        <% if(items[i].completed === true) {%>
+            <li class="item">
+                <span><%= items[i].thing %></span>
+                <span class='fa fa-plus'></span>
+            </li>
+        <% }      
+     } %>
+    </ul>
+
+    <h1>Recently Deleted: </h1>
+    <ul >
+    <% for(let i=0; i < items.length; i++) {%>
+        <% if(items[i].deleted === true) {%>
+            <li class="item">
+                <span><%= items[i].thing %></span>
+                <span class='fa fa-trash'></span>
+            </li>
+        <% }      
+     } %>
+    </ul>
     
 
     <script src='js/main.js'></script>

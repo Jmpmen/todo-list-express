@@ -23,7 +23,7 @@ app.use(express.json())
 
 app.get('/',async (request, response)=>{
     const todoItems = await db.collection('todos').find().toArray()
-    const itemsLeft = await db.collection('todos').countDocuments({completed: false})
+    const itemsLeft = await db.collection('todos').countDocuments({completed: false, deleted: false})
     response.render('index.ejs', { items: todoItems, left: itemsLeft })
     // db.collection('todos').find().toArray()
     // .then(data => {
@@ -36,7 +36,7 @@ app.get('/',async (request, response)=>{
 })
 
 app.post('/addTodo', (request, response) => {
-    db.collection('todos').insertOne({thing: request.body.todoItem, completed: false})
+    db.collection('todos').insertOne({thing: request.body.todoItem, completed: false, deleted: false})
     .then(result => {
         console.log('Todo Added')
         response.redirect('/')
@@ -78,11 +78,28 @@ app.put('/markUnComplete', (request, response) => {
 
 })
 
-app.delete('/deleteItem', (request, response) => {
-    db.collection('todos').deleteOne({thing: request.body.itemFromJS})
+app.put('/deleteItem', (request, response) => {
+    db.collection('todos').updateOne({thing: request.body.itemFromJS},{
+        $set: {
+            deleted: true
+          }
+    },{
+        sort: {_id: -1},
+        upsert: false
+    })
     .then(result => {
         console.log('Todo Deleted')
         response.json('Todo Deleted')
+    })
+    .catch(error => console.error(error))
+
+})
+
+app.delete('/deleteFromDB', (request, response) => {
+    db.collection('todos').deleteOne({thing: request.body.itemFromJS})
+    .then(result => {
+        console.log('Deleted Permanently')
+        response.json('Deleted Permanently')
     })
     .catch(error => console.error(error))
 

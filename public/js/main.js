@@ -1,12 +1,13 @@
-const deleteBtn = document.querySelectorAll('.fa-trash')
-const item = document.querySelectorAll('.item span')
-const itemCompleted = document.querySelectorAll('.item span.completed')
+const remove = document.querySelectorAll('.fa-remove')
+const complete = document.querySelectorAll('.fa-check')
+const itemCompleted = document.querySelectorAll('.fa-plus')
+const deletePermanently = document.querySelectorAll('.fa-trash')
 
-Array.from(deleteBtn).forEach((element)=>{
+Array.from(remove).forEach((element)=>{
     element.addEventListener('click', deleteItem)
 })
 
-Array.from(item).forEach((element)=>{
+Array.from(complete).forEach((element)=>{
     element.addEventListener('click', markComplete)
 })
 
@@ -14,11 +15,15 @@ Array.from(itemCompleted).forEach((element)=>{
     element.addEventListener('click', markUnComplete)
 })
 
+Array.from(deletePermanently).forEach((element)=>{
+    element.addEventListener('click', deleteFromDB)
+})
+
 async function deleteItem(){
     const itemText = this.parentNode.childNodes[1].innerText
     try{
         const response = await fetch('deleteItem', {
-            method: 'delete',
+            method: 'put',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
               'itemFromJS': itemText
@@ -60,6 +65,25 @@ async function markUnComplete(){
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
                 'itemFromJS': itemText
+            })
+          })
+        const data = await response.json()
+        console.log(data)
+        location.reload()
+
+    }catch(err){
+        console.log(err)
+    }
+}
+
+async function deleteFromDB(){
+    const itemText = this.parentNode.childNodes[1].innerText
+    try{
+        const response = await fetch('deleteFromDB', {
+            method: 'delete',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+              'itemFromJS': itemText
             })
           })
         const data = await response.json()
